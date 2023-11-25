@@ -3,7 +3,7 @@ use std::{fmt::Display, time::Duration};
 use clap::ValueEnum;
 
 #[derive(Debug, Clone, Copy, ValueEnum, Default)]
-pub(crate) enum DurationUnit {
+pub enum DurationUnit {
     #[default]
     Seconds,
     Minutes,
