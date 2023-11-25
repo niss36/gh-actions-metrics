@@ -71,6 +71,11 @@ jobs:
 
     needs: [lint_test_build, build_releases]
 
+    permissions:
+      contents: "write"
+      packages: "write"
+      pull-requests: "read"
+
     steps:
       - uses: actions/checkout@v4
 
