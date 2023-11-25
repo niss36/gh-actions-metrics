@@ -18,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - if: ${{ runner.debug }}
+        run: CARGO_TERM_VERBOSE=true >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
 
       - uses: Swatinem/rust-cache@v2
@@ -26,13 +29,13 @@ jobs:
         run: cargo fmt --all --check
 
       - name: cargo build
-        run: cargo build --workspace --verbose
+        run: cargo build --workspace
 
       - name: cargo clippy
         run: cargo clippy --workspace --all-targets -- -D warnings
 
       - name: cargo test
-        run: cargo test --workspace --verbose
+        run: cargo test --workspace
 
   build_releases:
     name: Build releases
@@ -43,9 +46,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - if: ${{ runner.debug }}
+        run: CARGO_TERM_VERBOSE=true >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
 
       - uses: Swatinem/rust-cache@v2
 
       - name: cargo build
-        run: cargo build --release --workspace --verbose
+        run: cargo build --release --workspace
