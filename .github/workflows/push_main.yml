@@ -40,29 +40,34 @@ jobs:
 
   build_releases:
     name: Build releases
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
+        target: [aarch64-apple-darwin, x86_64-unknown-linux-gnu]
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
 
       - name: Enable debug logging
         if: ${{ runner.debug }}
         run: echo "CARGO_TERM_VERBOSE=true" >> $GITHUB_ENV
 
+      - name: Install rust target
+        run: rustup target add ${{ matrix.target }}
+
       - name: cargo build
-        run: cargo build --release --workspace
+        run: cargo build --release --workspace --target=${{ matrix.target }}
 
       - name: Upload built artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.os }}
-          path: target/release/gh-actions-metrics
+          name: ${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/gh-actions-metrics
           retention-days: 1
 
   release:
