@@ -77,14 +77,12 @@ jobs:
       - name: Download built binaries
         uses: actions/download-artifact@v3
 
-      - run: tree ubuntu-latest
-
-      # - uses: marvinpinto/action-automatic-releases@latest
-      #   with:
-      #     repo_token: ${{ github.token }}
-      #     automatic_release_tag: "latest"
-      #     prerelease: true
-      #     title: "Development Build"
-      #     files: |
-      #       ubuntu-latest/target/release/gh-actions-metrics
-      #       macos-latest/target/release/gh-actions-metrics
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ github.token }}
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            ubuntu-latest/gh-actions-metrics
+            macos-latest/gh-actions-metrics
