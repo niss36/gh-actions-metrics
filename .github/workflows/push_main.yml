@@ -81,6 +81,17 @@ jobs:
 
       - name: Download built binaries
         uses: actions/download-artifact@v3
+        with:
+          path: binaries
+
+      - name: Rename binaries
+        working-directory: binaries
+        run: |
+          for target in * ; do
+            for bin in $target/* ; do
+              mv $bin $bin-$target
+            done
+          done
 
       - uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -89,5 +100,5 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            ubuntu-latest/gh-actions-metrics
-            macos-latest/gh-actions-metrics
+            binaries/gh-actions-metrics-ubuntu-latest
+            binaries/gh-actions-metrics-macos-latest
