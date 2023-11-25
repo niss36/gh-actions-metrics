@@ -95,7 +95,7 @@ jobs:
 
       - name: List binaries
         id: list-binaries
-        run: echo "binaries=$(find binaries -type file)" >> $GITHUB_OUTPUT
+        run: echo "binaries=$(find binaries -type f)" >> $GITHUB_OUTPUT
 
       - uses: marvinpinto/action-automatic-releases@latest
         with:
