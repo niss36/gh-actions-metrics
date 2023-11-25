@@ -93,12 +93,14 @@ jobs:
             done
           done
 
+      - name: List binaries
+        id: list-binaries
+        run: echo "binaries=$(find binaries -type file)" >> $GITHUB_OUTPUT
+
       - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ github.token }}
           automatic_release_tag: "latest"
           prerelease: true
           title: "Development Build"
-          files: |
-            binaries/ubuntu-latest/gh-actions-metrics-ubuntu-latest
-            binaries/macos-latest/gh-actions-metrics-macos-latest
+          files: ${{ steps.list-binaries.outputs.binaries }}
