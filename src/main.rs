@@ -2,7 +2,6 @@ use anyhow::{Ok, Result};
 use clap::Parser;
 use octocrab::Octocrab;
 use polars::io::{csv::CsvWriter, SerWriter};
-use tokio;
 
 mod cli;
 mod duration_unit;
