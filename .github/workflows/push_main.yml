@@ -1,0 +1,51 @@
+name: "Deploy main"
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: push_main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lint_test_build:
+    name: Lint, test and build all packages
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo fmt
+        run: cargo fmt --all --check
+
+      - name: cargo build
+        run: cargo build --workspace --verbose
+
+      - name: cargo clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: cargo test
+        run: cargo test --workspace --verbose
+
+  build_releases:
+    name: Build releases
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo build
+        run: cargo build --release --workspace --verbose
