@@ -100,5 +100,5 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            binaries/gh-actions-metrics-ubuntu-latest
-            binaries/gh-actions-metrics-macos-latest
+            binaries/ubuntu-latest/gh-actions-metrics-ubuntu-latest
+            binaries/macos-latest/gh-actions-metrics-macos-latest
