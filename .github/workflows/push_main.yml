@@ -18,13 +18,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Enable debug logging
-        if: ${{ runner.debug }}
-        run: echo "CARGO_TERM_VERBOSE=true" >> $GITHUB_ENV
-
       - uses: actions/checkout@v4
 
       - uses: Swatinem/rust-cache@v2
+
+      - name: Enable debug logging
+        if: ${{ runner.debug }}
+        run: echo "CARGO_TERM_VERBOSE=true" >> $GITHUB_ENV
 
       - name: cargo fmt
         run: cargo fmt --all --check
@@ -47,13 +47,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Enable debug logging
-        if: ${{ runner.debug }}
-        run: echo "CARGO_TERM_VERBOSE=true" >> $GITHUB_ENV
-
       - uses: actions/checkout@v4
 
       - uses: Swatinem/rust-cache@v2
+
+      - name: Enable debug logging
+        if: ${{ runner.debug }}
+        run: echo "CARGO_TERM_VERBOSE=true" >> $GITHUB_ENV
 
       - name: cargo build
         run: cargo build --release --workspace
