@@ -1,0 +1,31 @@
+name: "Get Actions Statistics"
+
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        type: string
+
+jobs:
+  stats:
+    name: "Get Actions Statistics"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download gh-actions-metrics
+        run: |
+          curl -L https://github.com/niss36/gh-actions-metrics/releases/download/latest/gh-actions-metrics-x86_64-unknown-linux-gnu -o gh-actions-metrics
+          chmod +x gh-actions-metrics
+
+      - name: Get Actions Metrics
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          if [[ -n "${{ github.event.inputs.since }}" ]]
+          then
+            since="--since ${{ github.event.inputs.since }}"
+          else
+            since=""
+          fi
+
+          ./gh-actions-metrics niss36 gh-actions-metrics push_main.yml --csv $since --duration-unit minutes
