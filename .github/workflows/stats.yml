@@ -37,7 +37,7 @@ jobs:
           fi
 
           ./gh-actions-metrics \
-            ${{ github.event.repository.owner }} \
+            ${{ github.repository_owner }} \
             ${{ github.event.repository.name }} \
             push_main.yml \
             --csv \
