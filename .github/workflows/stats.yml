@@ -28,4 +28,10 @@ jobs:
             since=""
           fi
 
-          ./gh-actions-metrics niss36 gh-actions-metrics push_main.yml --csv $since --duration-unit minutes
+          ./gh-actions-metrics \
+            ${{ github.event.repository.owner }} \
+            ${{ github.event.repository.name }} \
+            push_main.yml \
+            --csv \
+            $since \
+            --duration-unit minutes
