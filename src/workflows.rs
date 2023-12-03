@@ -21,6 +21,19 @@ pub async fn compute_workflow_stats(
     since: Option<NaiveDate>,
     duration_unit: DurationUnit,
 ) -> Result<DataFrame> {
+    let (all_workflow_runs, all_workflow_timings) =
+        get_workflow_runs_and_timings(client, owner, repo, workflow_name, since).await?;
+
+    get_workflow_run_statistics(&all_workflow_runs, &all_workflow_timings, duration_unit)
+}
+
+async fn get_workflow_runs_and_timings(
+    client: Octocrab,
+    owner: &str,
+    repo: &str,
+    workflow_name: &str,
+    since: Option<NaiveDate>,
+) -> Result<(Vec<Run>, Vec<WorkflowRunTiming>)> {
     let all_workflow_runs =
         get_all_workflow_runs(&client, owner, repo, workflow_name, since).await?;
 
@@ -39,7 +52,7 @@ pub async fn compute_workflow_stats(
         all_workflow_timings.push(response);
     }
 
-    get_workflow_run_statistics(&all_workflow_runs, &all_workflow_timings, duration_unit)
+    Ok((all_workflow_runs, all_workflow_timings))
 }
 
 async fn get_all_workflow_runs(
