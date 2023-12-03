@@ -9,25 +9,11 @@ use serde::{Deserialize, Serialize};
 use crate::duration_unit::DurationUnit;
 
 #[derive(Debug, Serialize, Deserialize)]
-struct WorkflowRunTiming {
+pub struct WorkflowRunTiming {
     run_duration_ms: u64,
 }
 
-pub async fn compute_workflow_stats(
-    client: Octocrab,
-    owner: &str,
-    repo: &str,
-    workflow_name: &str,
-    since: Option<NaiveDate>,
-    duration_unit: DurationUnit,
-) -> Result<DataFrame> {
-    let (all_workflow_runs, all_workflow_timings) =
-        get_workflow_runs_and_timings(client, owner, repo, workflow_name, since).await?;
-
-    get_workflow_run_statistics(&all_workflow_runs, &all_workflow_timings, duration_unit)
-}
-
-async fn get_workflow_runs_and_timings(
+pub async fn get_workflow_runs_and_timings(
     client: Octocrab,
     owner: &str,
     repo: &str,
@@ -105,7 +91,7 @@ async fn all_pages_since(
     Ok(runs)
 }
 
-fn get_workflow_run_statistics(
+pub fn get_workflow_run_statistics(
     workflow_runs: &[octocrab::models::workflows::Run],
     workflow_timings: &[WorkflowRunTiming],
     duration_unit: DurationUnit,
