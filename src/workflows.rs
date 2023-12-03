@@ -8,7 +8,7 @@ use polars::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::duration_unit::DurationUnit;
+use crate::{duration_unit::DurationUnit, granularity::Granularity};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct WorkflowRunTiming {
@@ -97,6 +97,7 @@ pub fn get_workflow_run_statistics(
     workflow_runs: &[octocrab::models::workflows::Run],
     workflow_timings: &[WorkflowRunTiming],
     duration_unit: DurationUnit,
+    granularity: Granularity,
 ) -> Result<DataFrame> {
     let workflow_statuses: Vec<_> = workflow_runs
         .iter()
@@ -117,10 +118,8 @@ pub fn get_workflow_run_statistics(
         "duration" => workflow_durations
     ]?;
 
-    let stats = df
-        .lazy()
-        .group_by([col("date"), col("status")])
-        .agg([
+    fn compute_stats(groups: LazyGroupBy) -> LazyFrame {
+        groups.agg([
             count().alias("count"),
             col("duration").mean().round(2).alias("mean_duration"),
             col("duration").median().round(2).alias("median_duration"),
@@ -129,8 +128,22 @@ pub fn get_workflow_run_statistics(
                 .round(2)
                 .alias("p95_duration"),
         ])
-        .sort("date", Default::default())
-        .collect()?;
+    }
+
+    let stats = match granularity {
+        Granularity::Daily => {
+            let groups = df.lazy().group_by([col("date"), col("status")]);
+
+            compute_stats(groups)
+                .sort("date", Default::default())
+                .collect()?
+        }
+        Granularity::Total => {
+            let groups = df.lazy().group_by([col("status")]);
+
+            compute_stats(groups).collect()?
+        }
+    };
 
     Ok(stats)
 }

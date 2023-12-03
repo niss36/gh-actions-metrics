@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 use clap::Parser;
 
-use crate::duration_unit::DurationUnit;
+use crate::{duration_unit::DurationUnit, granularity::Granularity};
 
 #[derive(Parser, Debug)]
 pub struct Args {
@@ -30,4 +30,7 @@ pub struct Args {
 
     #[clap(long, default_value_t)]
     pub duration_unit: DurationUnit,
+
+    #[clap(long, default_value_t = Granularity::Daily)]
+    pub granularity: Granularity,
 }

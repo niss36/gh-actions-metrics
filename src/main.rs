@@ -5,6 +5,7 @@ use polars::io::{csv::CsvWriter, SerWriter};
 
 mod cli;
 mod duration_unit;
+mod granularity;
 mod workflows;
 
 use cli::Args;
@@ -20,6 +21,7 @@ async fn main() -> Result<()> {
         csv,
         since,
         duration_unit,
+        granularity,
     } = Args::parse();
 
     let client = Octocrab::builder().personal_token(github_token).build()?;
@@ -27,8 +29,12 @@ async fn main() -> Result<()> {
     let (all_workflow_runs, all_workflow_timings) =
         get_workflow_runs_and_timings(client, &username, &repo, &workflow_name, since).await?;
 
-    let mut stats =
-        get_workflow_run_statistics(&all_workflow_runs, &all_workflow_timings, duration_unit)?;
+    let mut stats = get_workflow_run_statistics(
+        &all_workflow_runs,
+        &all_workflow_timings,
+        duration_unit,
+        granularity,
+    )?;
 
     if csv {
         CsvWriter::new(std::io::stdout())
