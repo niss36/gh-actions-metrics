@@ -1,9 +1,11 @@
 use anyhow::{Ok, Result};
 use chrono::NaiveDate;
 use octocrab::{models::workflows::Run, Octocrab, Page};
-use polars::df;
-use polars::lazy::dsl::col;
-use polars::prelude::*;
+use polars::{
+    df,
+    lazy::dsl::{col, count, lit},
+    prelude::*,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::duration_unit::DurationUnit;
@@ -119,7 +121,7 @@ pub fn get_workflow_run_statistics(
         .lazy()
         .group_by([col("date"), col("status")])
         .agg([
-            col("*").count().alias("count"),
+            count().alias("count"),
             col("duration").mean().round(2).alias("mean_duration"),
             col("duration").median().round(2).alias("median_duration"),
             col("duration")
