@@ -93,29 +93,29 @@ async fn all_pages_since(
     Ok(runs)
 }
 
-pub fn get_workflow_run_statistics(
-    workflow_runs: &[octocrab::models::workflows::Run],
-    workflow_timings: &[WorkflowRunTiming],
+pub fn compute_workflow_statistics(
+    runs: &[Run],
+    timings: &[WorkflowRunTiming],
     duration_unit: DurationUnit,
     granularity: Granularity,
 ) -> Result<DataFrame> {
-    let workflow_statuses: Vec<_> = workflow_runs
+    let statuses: Vec<_> = runs
         .iter()
         .map(|run| run.conclusion.clone().unwrap_or_default())
         .collect();
-    let workflow_dates: Vec<_> = workflow_runs
+    let dates: Vec<_> = runs
         .iter()
         .map(|run| run.created_at.clone().format("%Y-%m-%d").to_string())
         .collect();
-    let workflow_durations: Vec<_> = workflow_timings
+    let durations: Vec<_> = timings
         .iter()
         .map(|timing| duration_unit.convert(timing.run_duration_ms))
         .collect();
 
     let df = df![
-        "status" => workflow_statuses,
-        "date" => workflow_dates,
-        "duration" => workflow_durations
+        "status" => statuses,
+        "date" => dates,
+        "duration" => durations
     ]?;
 
     fn compute_stats(groups: LazyGroupBy) -> LazyFrame {

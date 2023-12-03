@@ -9,7 +9,7 @@ mod granularity;
 mod workflows;
 
 use cli::Args;
-use workflows::{get_workflow_run_statistics, get_workflow_runs_and_timings};
+use workflows::{compute_workflow_statistics, get_workflow_runs_and_timings};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -26,15 +26,10 @@ async fn main() -> Result<()> {
 
     let client = Octocrab::builder().personal_token(github_token).build()?;
 
-    let (all_workflow_runs, all_workflow_timings) =
+    let (runs, timings) =
         get_workflow_runs_and_timings(client, &username, &repo, &workflow_name, since).await?;
 
-    let mut stats = get_workflow_run_statistics(
-        &all_workflow_runs,
-        &all_workflow_timings,
-        duration_unit,
-        granularity,
-    )?;
+    let mut stats = compute_workflow_statistics(&runs, &timings, duration_unit, granularity)?;
 
     if csv {
         CsvWriter::new(std::io::stdout())
