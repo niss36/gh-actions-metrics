@@ -14,6 +14,13 @@ on:
           - minutes
           - hours
 
+      granularity:
+        type: choice
+        default: daily
+        options:
+          - daily
+          - total
+
 jobs:
   stats:
     name: "Get Actions Statistics"
@@ -43,3 +50,4 @@ jobs:
             --csv \
             $since \
             --duration-unit ${{ github.event.inputs.duration_unit }}
+            --granularity ${{ github.event.inputs.granularity }}
