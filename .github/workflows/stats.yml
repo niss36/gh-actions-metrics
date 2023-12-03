@@ -49,5 +49,5 @@ jobs:
             push_main.yml \
             --csv \
             $since \
-            --duration-unit ${{ github.event.inputs.duration_unit }}
+            --duration-unit ${{ github.event.inputs.duration_unit }} \
             --granularity ${{ github.event.inputs.granularity }}
